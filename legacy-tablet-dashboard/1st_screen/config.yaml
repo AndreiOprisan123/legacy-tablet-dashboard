@@ -1,7 +1,7 @@
 name: "Tablet Dashboard (Unlocked Kasm)"
 slug: "tablet_dashboard_kasm"
-version: "1.0.beta20"
-description: "Motor KasmVNC deblocat pentru HTTP. Rulează perfect pe tablete vechi fără NGINX."
+version: "1.0.1"
+description: "Ultra-fluid dashboard based on official KasmVNC. Optimized for old tablets (Touch Scroll, native HTTP, Dark Mode)."
 startup: application
 boot: auto
 init: false
@@ -10,8 +10,8 @@ arch:
   - amd64
 ports:
   "6901/tcp": 6901
-webui: "http://[HOST]:[PORT:6901]/?username=kasm_user&password=0000"
+webui: "http://[HOST]:[PORT:6901]/"
 options:
-  url: "http://192.168.1.159:8123"
+  url: "http://homeassistant.local:8123"
 schema:
   url: str

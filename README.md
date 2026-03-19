@@ -1,55 +1,46 @@
-# 📺 Home Assistant Legacy Tablet Dashboard Hub
+# Tablet Dashboard (Unlocked Kasm) for Home Assistant 📱
 
-Give a second life to your old iPads, Android tablets, or smart fridges! This project provides a high-compatibility bridge to display modern Home Assistant Dashboards (or any URL) on devices with outdated browsers that normally can't load the HA interface.
+A lightweight, heavily optimized Home Assistant Add-on that brings modern dashboards to **old tablets, smart fridges, and legacy devices** that struggle with modern web engines.
 
----
+Based on the official [KasmVNC](https://kasmweb.com/) Chromium container, this add-on creates an ultra-fluid, server-side rendered instance of your Home Assistant dashboard and streams it to your old device via a simple HTML5 viewer. 
 
 ## ✨ Features
-* **High Compatibility:** Uses a Firefox-based noVNC bridge to render content on the server and stream it to the tablet.
-* **Multi-Instance:** Run up to 5 independent instances for different rooms or devices with unique resolutions.
-* **Touch Optimized:** Includes a special "Gesture Mode" for smooth scrolling on old touchscreens.
-* **Kiosk Ready:** Perfectly fits the screen with full-screen support.
-* **Universal:** Works for Home Assistant, YouTube, Spotify, or any web dashboard.
 
----
+- 🔓 **Plain HTTP Support:** Bypasses Kasm's strict HTTPS/SSL requirements. Runs perfectly on local HTTP, preventing those annoying "Secure Connection Required" black screens on legacy browsers.
+- 👆 **Smart Touch-to-Scroll (V2.1):** Includes a custom-built, deeply integrated extension that translates legacy "touch-drag" events into smooth scrolling. No more accidentally selecting text while trying to navigate!
+- 🖱️ **Long-Press / Right-Click Support:** Features a smart 15px deadzone. You can now confidently long-press items (like lights or entities for more info) without accidentally triggering a page scroll.
+- 🌙 **Native Dark Mode:** Chromium is forced into Dark Mode by default to save your eyes (and your screen's backlight) at night.
+- 🚀 **Performance Optimized:** All unnecessary Kasm background services (Audio, Microphone, Gamepad, Printer) are completely disabled to save CPU and RAM on your Home Assistant host.
 
-## 🛠️ Installation
+## 📦 Installation
 
-1. Copy the URL of this GitHub repository.
-2. In your Home Assistant, go to **Settings** > **Add-ons** > **Add-on Store**.
-3. Click the **three dots** in the top right corner and select **Repositories**.
-4. Paste the URL and click **Add**.
-5. You will now see 5 instances of **Legacy Tablet Dashboard** in your local store.
-6. Install the instances you need (e.g., Instance 1 for the Kitchen, Instance 2 for the Bedroom).
-
----
+1. Navigate to your Home Assistant **Add-on Store**.
+2. Click the 3 dots in the top right corner and select **Repositories**.
+3. Add the URL of this repository.
+4. Search for **Tablet Dashboard (Unlocked Kasm)** and click **Install**.
 
 ## ⚙️ Configuration
 
-Each instance can be configured independently:
+Before starting the add-on, go to the **Configuration** tab:
 
-1. **URL:** Enter the full address you want to display (e.g., `http://192.168.1.100:8123/dashboard-tablet?kiosk`).
-2. **Touch Optimization:** * **Enabled (True):** Best for tablets. Allows natural finger swiping to scroll.
-   * **Disabled (False):** Best for devices using a mouse or legacy touch-to-click inputs.
-3. **Network:** Assign the port for each device (Default starts at 5800). **Don't forget to save the port number in the Network section!**
+* **`url`**: Enter the exact URL of your Home Assistant dashboard that you want to display. 
+  * *Default:* `http://homeassistant.local:8123`
+  * *Example:* `http://192.168.1.100:8123/lovelace/tablet`
 
----
+## 🚀 Usage
 
-## 🚀 How to Access
+1. **Start** the add-on. *(Note: The first boot will take a few minutes as it downloads and extracts the official Kasm image).*
+2. Click **Open Web UI** or navigate to `http://<YOUR_HA_IP>:6901` on your old tablet.
+3. You will be greeted by the KasmVNC login screen. 
 
-Once the add-on is started, you can access your dashboard via:
-`http://YOUR_HOME_ASSISTANT_IP:5800` (or 5801, 5802, depending on the instance).
+**Default Credentials:**
+* **Username:** `kasm_user`
+* **Password:** `0000`
 
-*Tip: Use the **"Open Web UI"** button directly from the Add-on Info page for quick access.*
+> 💡 **Tip for old tablets:** Once you log in, your browser will ask if you want to save the password. Choose "Save" so you never have to type it again when the tablet reboots or refreshes the page.
 
----
-
-## ⚠️ Resource Usage Disclaimer
-Each active instance runs a dedicated virtual display and a Firefox process. 
-* **Per Instance:** ~250MB - 400MB RAM.
-* Running all 3 instances simultaneously requires at least **1.5GB of free RAM**. Monitor your system health if running on a Raspberry Pi.
-
----
+## 🛠️ How it works
+This add-on runs a full desktop-class Chromium browser *inside* your Home Assistant server. When you touch your old tablet, it sends those coordinates to the server; the server processes the heavy Javascript of the Home Assistant dashboard and sends back a highly compressed, lag-free video stream of the result. Your old tablet does zero heavy lifting!
 
 ## ☕ Support my work
 
