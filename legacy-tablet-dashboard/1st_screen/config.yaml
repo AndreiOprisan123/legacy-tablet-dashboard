@@ -1,6 +1,6 @@
 name: "Legacy Tablet Dashboard 1"
 slug: "legacy_tablet_1"
-version: "1.1.0"
+version: "1.1.1"
 description: "Display Home Assistant or any URL on old tablets and fridges using an ultra-compatible noVNC bridge."
 url: "https://github.com/AndreiOprisan123/legacy-tablet-dashboard"
 startup: application
