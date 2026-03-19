@@ -1,30 +1,26 @@
 FROM lscr.io/linuxserver/webtop:ubuntu-xfce
 
-# Trecem pe Ubuntu, deci folosim apt-get pentru a instala JQ
 RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
 
-# Setăm mediul
 ENV PUID=1000
 ENV PGID=1000
 ENV TZ=Europe/Bucharest
 
-# Cream scriptul care taie blocajul de HTTPS
 RUN mkdir -p /custom-cont-init.d && \
     cat <<'EOF' > /custom-cont-init.d/99-setup-kiosk.sh
 #!/bin/bash
 echo "--- PREPARING FLUID DASHBOARD ---"
 
-# 1. PATCH KASMVNC: Distrugem blocajul pentru HTTP (Ecranul negru)
-sed -i 's/window.isSecureContext === false/1 == 2/g' /usr/share/kasmvnc/www/index.html || true
-sed -i 's/window.isSecureContext===false/1==2/g' /usr/share/kasmvnc/www/index.html || true
+# PATCH SUPREM KASMVNC: Căutăm în toate fișierele și forțăm recunoașterea HTTP-ului
+find /usr/share/kasmvnc/www -type f \( -name "*.html" -o -name "*.js" \) -exec sed -i 's/window.isSecureContext/true/g' {} + || true
 
-# 2. CITIM URL-ul setat în Home Assistant
+# Citim URL-ul setat în Home Assistant
 USER_URL=$(jq --raw-output '.url' /data/options.json)
 if [ -z "$USER_URL" ] || [ "$USER_URL" == "null" ]; then
     USER_URL="http://homeassistant.local:8123"
 fi
 
-# 3. AUTOSTART: Forțăm Chromium să pornească singur pe tot ecranul
+# Autostart Chromium direct pe URL-ul utilizatorului
 mkdir -p /config/.config/autostart
 cat <<APP > /config/.config/autostart/kiosk.desktop
 [Desktop Entry]

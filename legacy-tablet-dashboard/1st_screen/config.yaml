@@ -1,6 +1,6 @@
 name: "Tablet Dashboard (Fluid Version)"
 slug: "tablet_dashboard_fluid"
-version: "1.0.beta2"
+version: "1.0.beta3"
 description: "O versiune super-fluidă bazată pe KasmVNC și XFCE pentru ecrane vechi."
 startup: application
 boot: auto
