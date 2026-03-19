@@ -1,6 +1,6 @@
 name: "Tablet Dashboard (Unlocked Kasm)"
 slug: "tablet_dashboard_kasm"
-version: "1.0.beta9"
+version: "1.0.beta10"
 description: "Motor KasmVNC deblocat pentru HTTP. Rulează perfect pe tablete vechi fără NGINX."
 startup: application
 boot: auto
