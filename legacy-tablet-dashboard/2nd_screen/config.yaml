@@ -2,7 +2,7 @@ name: "Legacy Tablet Dashboard 2"
 slug: "legacy_tablet_2"
 version: "1.0.6"
 description: "Instance 2: Display Home Assistant or any URL on old tablets and fridges."
-url: "https://github.com/your-username/your-repo"
+url: "https://github.com/AndreiOprisan123/legacy-tablet-dashboard"
 startup: application
 boot: auto
 init: false
