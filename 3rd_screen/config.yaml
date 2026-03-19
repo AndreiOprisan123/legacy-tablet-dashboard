@@ -1,0 +1,21 @@
+name: "Legacy Tablet Dashboard 3"
+slug: "legacy_tablet_3"
+version: "1.0.6"
+description: "Instance 3: Display Home Assistant or any URL on old tablets and fridges."
+url: "https://github.com/your-username/your-repo"
+startup: application
+boot: auto
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armv7
+ports:
+  "5802/tcp": 5802
+webui: "http://[HOST]:[PORT:5802]/"
+options:
+  url: "http://homeassistant.local:8123"
+  touch_optimization: true
+schema:
+  url: str
+  touch_optimization: bool

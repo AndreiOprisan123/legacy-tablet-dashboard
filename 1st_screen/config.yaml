@@ -1,0 +1,21 @@
+name: "Legacy Tablet Dashboard 1"
+slug: "legacy_tablet_1"
+version: "1.0.6"
+description: "Display Home Assistant or any URL on old tablets and fridges using an ultra-compatible noVNC bridge."
+url: "https://github.com/your-username/your-repo"
+startup: application
+boot: auto
+init: false
+arch:
+  - aarch64
+  - amd64
+  - armv7
+ports:
+  "5800/tcp": 5800
+webui: "http://[HOST]:[PORT:5800]/"
+options:
+  url: "http://homeassistant.local:8123"
+  touch_optimization: true
+schema:
+  url: str
+  touch_optimization: bool
