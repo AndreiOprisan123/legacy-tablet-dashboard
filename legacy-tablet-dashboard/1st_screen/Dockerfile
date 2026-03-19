@@ -20,6 +20,12 @@ cat <<P_EOF > $POLICIES_DIR/policies.json
   "policies": {
     "OverrideFirstRunPage": "$USER_URL",
     "Homepage": { "URL": "$USER_URL", "Locked": true },
+    "ExtensionSettings": {
+      "scroll-anywhere@juraj.macura": {
+        "installation_mode": "force_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/scroll_anywhere/latest.xpi"
+      }
+    },
     "Preferences": {
       "dom.w3c_touch_events.enabled": 1,
       "dom.w3c_touch_events.legacy_apis.enabled": true,
