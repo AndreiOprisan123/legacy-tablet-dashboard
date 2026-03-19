@@ -1,54 +1,40 @@
-FROM lscr.io/linuxserver/webtop:ubuntu-xfce
+FROM kasmweb/chromium:1.14.0
 
-# Instalam JQ
+# Trecem pe root ca să putem sparge fișierele de sistem Kasm
+USER root
+
 RUN apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
 
-# Setăm mediul
-ENV PUID=1000
-ENV PGID=1000
-ENV TZ=Europe/Bucharest
+# HACK 1: Ștergem flag-ul -sslOnly din scriptul de startup Kasm (cum a zis mmcclaskey)
+RUN sed -i 's/-sslOnly//g' /dockerstartup/vnc_startup.sh || true
 
-# FORȚĂM containerul să folosească KasmVNC în loc de interfața nativă (Selkies/WebRTC)
-ENV WEBTOP_CUSTOM_START="true"
-ENV CUSTOM_PORT="3000"
-# Setari specifice KasmVNC care permit HTTP
-ENV KASMVNC_ALLOW_HTTP="true"
-ENV VNCOPTIONS="-AllowHttp=true"
+# HACK 2: Modificăm fișierul de configurare KasmVNC (cum au zis ahkimkoo și fliot)
+RUN sed -i 's/require_ssl: true/require_ssl: false/g' /usr/share/kasmvnc/kasmvnc_defaults.yaml || true
 
-RUN mkdir -p /custom-cont-init.d && \
-    cat <<'EOF' > /custom-cont-init.d/99-setup-kiosk.sh
-#!/bin/bash
-echo "--- PREPARING FLUID DASHBOARD ---"
+# Scriptul nostru normal de autostart pentru Home Assistant
+RUN echo '#!/bin/bash\n\
+echo "--- PREPARING UNLOCKED KASM DASHBOARD ---"\n\
+\n\
+# Citim URL-ul\n\
+USER_URL=$(jq --raw-output ".url" /data/options.json 2>/dev/null)\n\
+if [ -n "$USER_URL" ] && [ "$USER_URL" != "null" ]; then\n\
+    export LAUNCH_URL="$USER_URL"\n\
+else\n\
+    export LAUNCH_URL="http://homeassistant.local:8123"\n\
+fi\n\
+echo "Kiosk URL is: $LAUNCH_URL"\n\
+\n\
+# Oprim serviciile care consumă resurse degeaba\n\
+export KASM_SVC_AUDIO=0\n\
+export KASM_SVC_AUDIO_MIC=0\n\
+export KASM_SVC_GAMEPAD=0\n\
+export KASM_SVC_PRINTER=0\n\
+\n\
+# Setăm parola\n\
+export VNC_PW="0000"\n\
+' > /dockerstartup/custom_startup.sh
 
-# PATCH KASMVNC (În caz că totuși încarcă interfața Kasm)
-find /usr/share/kasmvnc/www -type f \( -name "*.html" -o -name "*.js" \) -exec sed -i 's/window.isSecureContext/true/g' {} + || true
+RUN chmod +x /dockerstartup/custom_startup.sh
 
-# Alternativă: Daca foloseste interfața nouă, incercăm să eliminăm blocajul din fișierele JS din /app/www
-if [ -d "/app/www" ]; then
-    echo "Paching Selkies UI..."
-    find /app/www -type f -name "*.js" -exec sed -i 's/isSecureContext/true/g' {} + || true
-fi
-
-# Citim URL-ul
-USER_URL=$(jq --raw-output '.url' /data/options.json)
-if [ -z "$USER_URL" ] || [ "$USER_URL" == "null" ]; then
-    USER_URL="http://homeassistant.local:8123"
-fi
-
-# Autostart Chromium
-mkdir -p /config/.config/autostart
-cat <<APP > /config/.config/autostart/kiosk.desktop
-[Desktop Entry]
-Type=Application
-Name=HA Kiosk
-Exec=sh -c "chromium-browser --kiosk --no-sandbox --touch-events=enabled '$USER_URL' || chromium --kiosk --no-sandbox --touch-events=enabled '$USER_URL'"
-StartupNotify=false
-Terminal=false
-APP
-
-chown -R abc:abc /config/.config || true
-
-echo "--- READY! ---"
-EOF
-
-RUN chmod +x /custom-cont-init.d/99-setup-kiosk.sh
+# Kasm ne obligă să ne întoarcem la un user normal pentru a rula corect
+USER 1000

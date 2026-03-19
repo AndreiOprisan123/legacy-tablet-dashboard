@@ -1,7 +1,7 @@
-name: "Tablet Dashboard (Fluid Version)"
-slug: "tablet_dashboard_fluid"
-version: "1.0.beta4"
-description: "O versiune super-fluidă bazată pe KasmVNC și XFCE pentru ecrane vechi."
+name: "Tablet Dashboard (Unlocked Kasm)"
+slug: "tablet_dashboard_kasm"
+version: "1.0.beta5"
+description: "Motor KasmVNC deblocat pentru HTTP. Rulează perfect pe tablete vechi fără NGINX."
 startup: application
 boot: auto
 init: false
@@ -9,8 +9,8 @@ arch:
   - aarch64
   - amd64
 ports:
-  "3000/tcp": 3000
-webui: "http://[HOST]:[PORT:3000]/"
+  "6901/tcp": 6901
+webui: "http://[HOST]:[PORT:6901]/?username=kasm_user&password=0000"
 options:
   url: "http://homeassistant.local:8123"
 schema:
