@@ -1,21 +1,25 @@
 #!/bin/sh
 echo "--- Initializing Legacy Tablet Dashboard ---"
 
-# Read user options from Home Assistant
 USER_URL=$(jq --raw-output '.url' /data/options.json)
 TOUCH=$(jq --raw-output '.touch_optimization' /data/options.json)
 
-# Apply the URL to Firefox
 echo "$USER_URL" > /var/run/s6/container_environment/FF_OPEN_URL
-echo "Target URL set to: $USER_URL"
 
-# Apply Touch Optimization (Smooth scrolling for fingers)
 if [ "$TOUCH" = "true" ]; then
+    # Activează suportul de gesturi în Firefox
     echo "1" > /var/run/s6/container_environment/MOZ_USE_XINPUT2
-    echo "Touch Optimization: ENABLED (Gesture mode)"
+    # Forțează Firefox să ignore mouse-ul și să asculte doar de touch
+    echo "1" > /var/run/s6/container_environment/MOZ_TOUCH_WIDGET_DRAG
+    # Spunem serverului VNC că avem un ecran tactil
+    echo "1" > /var/run/s6/container_environment/VNC_TOUCH_DEVICE
+    
+    echo "Touch Optimization: ENABLED (Natural Scroll)"
 else
     echo "0" > /var/run/s6/container_environment/MOZ_USE_XINPUT2
-    echo "Touch Optimization: DISABLED (Mouse mode)"
+    echo "0" > /var/run/s6/container_environment/MOZ_TOUCH_WIDGET_DRAG
+    echo "0" > /var/run/s6/container_environment/VNC_TOUCH_DEVICE
+    echo "Touch Optimization: DISABLED"
 fi
 
 echo "--- Initialization Complete ---"
