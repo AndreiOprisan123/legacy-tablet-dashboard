@@ -8,57 +8,38 @@ ENV ENABLE_CORS=1
 
 RUN cat <<'EOF' > /etc/cont-init.d/00-set-config.sh
 #!/bin/sh
-echo "--- APPLYING ULTIMATE FORCED POLICIES ---"
+echo "--- FORCING ONE-FINGER SCROLL ENGINE ---"
 
 USER_URL=$(jq --raw-output '.url' /data/options.json)
-TOUCH=$(jq --raw-output '.touch_optimization' /data/options.json)
 
 POLICIES_DIR="/usr/lib/firefox/distribution"
 mkdir -p $POLICIES_DIR
 
-# Generăm fișierul de politici care DISTRUGE ecranul de bun venit
 cat <<P_EOF > $POLICIES_DIR/policies.json
 {
   "policies": {
-    "DisableFirefoxAccounts": true,
-    "DisablePocket": true,
-    "DisableTelemetry": true,
     "OverrideFirstRunPage": "$USER_URL",
-    "OverridePostUpdatePage": "$USER_URL",
-    "DontCheckDefaultBrowser": true,
-    "UserMessaging": {
-        "WhatsNew": false,
-        "ExtensionRecommendations": false,
-        "FeatureRecommendations": false,
-        "UrlbarInterventions": false,
-        "SkipOnboarding": true,
-        "MoreFromMozilla": false
-    },
-    "Homepage": {
-      "URL": "$USER_URL",
-      "Locked": true,
-      "StartPage": "homepage"
-    },
+    "Homepage": { "URL": "$USER_URL", "Locked": true },
     "Preferences": {
       "dom.w3c_touch_events.enabled": 1,
+      "dom.w3c_touch_events.legacy_apis.enabled": true,
       "apz.drag.touch.enabled": true,
-      "apz.allow_zooming": false,
+      "apz.touch_start_tolerance": 0,
       "ui.click_hold_context_menus": true,
+      "apz.allow_zooming": false,
       "security.mixed_content.block_active_content": false,
-      "browser.tabs.warnOnClose": false,
-      "browser.aboutwelcome.enabled": false,
-      "browser.shell.checkDefaultBrowser": false
+      "browser.tabs.warnOnClose": false
     }
   }
 }
 P_EOF
 
-# Setăm variabila de mediu pentru noVNC și Firefox
+# Setări la nivel de sistem Docker (pentru noVNC bridge)
 mkdir -p /var/run/s6/container_environment/
-echo -n "$USER_URL" > /var/run/s6/container_environment/FF_OPEN_URL
+echo -n "1" > /var/run/s6/container_environment/VNC_TOUCH_DEVICE
 echo -n "1" > /var/run/s6/container_environment/MOZ_USE_XINPUT2
 
-echo "Policies applied. Welcome screen disabled. URL: $USER_URL"
+echo "Settings applied. URL: $USER_URL"
 echo "--- DONE ---"
 EOF
 
